@@ -1,66 +1,47 @@
+\91788\OneDrive\Desktop\webprogramming\style.css */
 body {
     font-family: Arial, sans-serif;
-    background-color: #c7d9dd;
-    margin: 0;
+    line-height: 1.6;
+    color: #333;
+}
+
+.relative-box {
+    position: relative;
+    top: 20px;
+    left: 20px;
+    background-color: #f8f9fa;
     padding: 20px;
+    border-radius: 8px;
 }
 
-.container {
-    max-width: 600px;
-    margin: auto;
-    background: #d5e5d5;
+.absolute-box {
+    position: absolute;
+    top: 200px;
+    right: 50px;
+    background-color: #e9ecef;
     padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    max-width: 300px;
 }
 
-h1, h2 {
-    text-align: center;
+h1, h2, h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
 }
 
-form {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+.table {
+    margin-top: 2rem;
 }
 
-input {
-    padding: 10px;
-    margin-right: 10px;
-    flex: 1;
+.skills-list li {
+    margin-bottom: 0.5rem;
 }
 
-button {
-    padding: 10px;
-    background: #adb2d4;
-    color: white;
-    border: none;
-    cursor: pointer;
+a {
+    color: #007bff;
+    text-decoration: none;
 }
 
-button:hover {
-    background: #4cae4c;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-li button {
-    background: #57b4ba;
-    border: none;
-    color: white;
-    cursor: pointer;
-}
-
-li button:hover {
-    background: #015551
+a:hover {
+    text-decoration: underline;
 }
