@@ -1,0 +1,164 @@
+// ...existing code...
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="stylebmi.css" />
+    <title>BMI Calculator</title>
+    <style>
+      :root{
+        --bg:#f3f4f6;
+        --card:#797978;
+        --accent:#212121;
+        --muted:#f1f1f1;
+        --success:#1e7e34;
+        --warning:#ffc107;
+        --danger:#dc3545;
+      }
+      html,body{height:100%;margin:0;font-family:Segoe UI, Roboto, Arial, sans-serif;background:var(--bg);color:var(--accent)}
+      .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px}
+      .container{
+        width:100%;
+        max-width:420px;
+        background:var(--card);
+        color:var(--muted);
+        border-radius:12px;
+        padding:24px;
+        box-shadow:0 6px 18px rgba(0,0,0,0.15);
+      }
+      h1{margin:0 0 12px 0;font-size:1.6rem}
+      form p{margin:16px 0;display:flex;flex-direction:column}
+      label{font-weight:600;margin-bottom:6px}
+      input[type="number"]{
+        padding:8px 10px;border-radius:6px;border:1px solid rgba(0,0,0,0.12);font-size:1rem;
+        width:100%;box-sizing:border-box;
+      }
+      .controls{display:flex;gap:10px;align-items:center;margin-top:12px}
+      button{cursor:pointer;padding:8px 12px;border-radius:8px;border:2px solid var(--accent);background:#fff;color:var(--accent);font-weight:600}
+      #results{font-size:1.4rem;margin-top:18px;min-height:40px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+      #bmi-value{font-weight:700;font-size:1.8rem}
+      .cat{padding:6px 10px;border-radius:8px;color:#fff;display:inline-block}
+      .under{background:var(--warning);color:#000}
+      .normal{background:var(--success)}
+      .over{background:var(--danger)}
+      #weight-guide{margin-top:16px;font-size:0.95rem;color:var(--muted)}
+      small{opacity:0.9}
+      @media (max-width:480px){.container{padding:16px}}
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="container" role="region" aria-labelledby="page-title">
+        <h1 id="page-title">BMI Calculator</h1>
+        <form id="bmi-form" novalidate>
+          <p>
+            <label for="height">Height (cm)</label>
+            <input type="number" id="height" name="height" inputmode="decimal" min="0" step="0.1" placeholder="e.g. 170" required />
+          </p>
+          <p>
+            <label for="weight">Weight (kg)</label>
+            <input type="number" id="weight" name="weight" inputmode="decimal" min="0" step="0.1" placeholder="e.g. 65" required />
+          </p>
+          <div class="controls">
+            <button type="submit" id="calc">Calculate</button>
+            <button type="button" id="reset">Reset</button>
+            <button type="button" id="copy" title="Copy result to clipboard">Copy</button>
+          </div>
+
+          <div id="results" aria-live="polite">
+            <div id="bmi-value" aria-atomic="true"></div>
+            <div id="bmi-category"></div>
+            <div id="bmi-message"></div>
+          </div>
+
+          <div id="weight-guide" aria-hidden="false">
+            <h3>BMI Weight Guide</h3>
+            <p>Underweight &lt; 18.6</p>
+            <p>Normal 18.6 – 24.9</p>
+            <p>Overweight ≥ 24.9</p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // script.js - improved and fixed
+      const form = document.getElementById('bmi-form');
+      const heightEl = document.getElementById('height');
+      const weightEl = document.getElementById('weight');
+      const results = document.getElementById('results');
+      const bmiValue = document.getElementById('bmi-value');
+      const bmiCategory = document.getElementById('bmi-category');
+      const bmiMessage = document.getElementById('bmi-message');
+      const resetBtn = document.getElementById('reset');
+      const copyBtn = document.getElementById('copy');
+
+      function classify(bmi){
+        if (bmi < 18.6) return {label: 'Underweight', cls: 'cat under', msg: 'You are under the normal weight range.'};
+        if (bmi >= 18.6 && bmi < 24.9) return {label: 'Normal', cls: 'cat normal', msg: 'Good — your weight is in the normal range.'};
+        return {label: 'Overweight', cls: 'cat over', msg: 'You are above the normal weight range.'};
+      }
+
+      function clearResults(){
+        bmiValue.textContent = '';
+        bmiCategory.textContent = '';
+        bmiCategory.className = '';
+        bmiMessage.textContent = '';
+      }
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        clearResults();
+
+        const height = parseFloat(heightEl.value);
+        const weight = parseFloat(weightEl.value);
+
+        if (!height || height <= 0 || isNaN(height)) {
+          bmiMessage.textContent = 'Please enter a valid height in cm.';
+          heightEl.focus();
+          return;
+        }
+        if (!weight || weight <= 0 || isNaN(weight)) {
+          bmiMessage.textContent = 'Please enter a valid weight in kg.';
+          weightEl.focus();
+          return;
+        }
+
+        const bmi = +(weight / Math.pow(height / 100, 2));
+        const bmiRounded = bmi.toFixed(2);
+        const info = classify(bmi);
+
+        bmiValue.textContent = `BMI: ${bmiRounded}`;
+        bmiCategory.textContent = info.label;
+        bmiCategory.className = info.cls;
+        bmiMessage.textContent = info.msg;
+      });
+
+      resetBtn.addEventListener('click', function(){
+        heightEl.value = '';
+        weightEl.value = '';
+        clearResults();
+        heightEl.focus();
+      });
+
+      copyBtn.addEventListener('click', async function(){
+        const text = bmiValue.textContent ? `${bmiValue.textContent} — ${bmiCategory.textContent}` : '';
+        if (!text) return;
+        try {
+          await navigator.clipboard.writeText(text);
+          bmiMessage.textContent = 'Result copied to clipboard.';
+        } catch (err) {
+          bmiMessage.textContent = 'Unable to copy result.';
+        }
+      });
+
+      // Keyboard accessibility: Enter in inputs triggers submit (default), Escape resets
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') resetBtn.click();
+      });
+    </script>
+  </body>
+</html>
+// ...existing code...
